@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearGrid — AI Prompt Engineer Training</title>
+<style>
+/* ── RESET ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* ── TOKENS ─────────────────────────────────────── */
+:root{
+  --navy:#1A3A5C;
+  --navy-dark:#0D2137;
+  --accent:#2980B9;
+  --white:#FFFFFF;
+  --off-white:#F7F9FC;
+  --text:#1A202C;
+  --muted:#6B7280;
+  --border:#E2E8F0;
+  --shadow:0 2px 12px rgba(0,0,0,.10);
+  --radius:10px;
+
+  --d1:#2C5282; /* Day 1 – deep blue   */
+  --d2:#276749; /* Day 2 – forest green*/
+  --d3:#553C9A; /* Day 3 – purple      */
+  --d4:#C05621; /* Day 4 – orange      */
+  --d5:#1A5276; /* Day 5 – teal        */
+  --d6:#922B21; /* Day 6 – crimson     */
+}
+
+/* ── BASE ───────────────────────────────────────── */
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.7;
+  color:var(--text);
+  background:var(--off-white);
+}
+
+/* ── TOP NAV ────────────────────────────────────── */
+.top-nav{
+  position:sticky;top:0;z-index:999;
+  background:var(--navy-dark);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:52px;
+  border-bottom:3px solid var(--accent);
+}
+.nav-brand{color:#fff;font-weight:700;font-size:15px;letter-spacing:.3px}
+.nav-days{display:flex;gap:6px}
+.nav-days a{
+  color:rgba(255,255,255,.65);font-size:12px;font-weight:600;
+  text-decoration:none;padding:4px 10px;border-radius:20px;
+  transition:all .2s;
+}
+.nav-days a:hover{background:rgba(255,255,255,.12);color:#fff}
+.nav-days a.d1{color:#90CDF4}.nav-days a.d2{color:#9AE6B4}
+.nav-days a.d3{color:#D6BCFA}.nav-days a.d4{color:#FBBF24}
+.nav-days a.d5{color:#81E6D9}.nav-days a.d6{color:#FCA5A5}
+
+/* ── PAGES WRAPPER ──────────────────────────────── */
+.pages{max-width:960px;margin:0 auto;padding:32px 20px 64px}
+
+/* ── PAGE SEPARATOR ─────────────────────────────── */
+.page{
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:28px;
+  overflow:hidden;
+}
+
+/* Page header bar (colour strip + label) */
+.page-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px 12px;
+  border-bottom:1px solid var(--border);
+}
+.page-num{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.day-badge{
+  font-size:11px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;padding:3px 12px;border-radius:20px;
+  color:#fff;
+}
+.d1 .day-badge{background:var(--d1)} .d2 .day-badge{background:var(--d2)}
+.d3 .day-badge{background:var(--d3)} .d4 .day-badge{background:var(--d4)}
+.d5 .day-badge{background:var(--d5)} .d6 .day-badge{background:var(--d6)}
+.intro-badge{background:var(--navy)} .closing-badge{background:var(--navy-dark)}
+
+/* Coloured left border per day */
+.d1{border-left:5px solid var(--d1)} .d2{border-left:5px solid var(--d2)}
+.d3{border-left:5px solid var(--d3)} .d4{border-left:5px solid var(--d4)}
+.d5{border-left:5px solid var(--d5)} .d6{border-left:5px solid var(--d6)}
+.intro{border-left:5px solid var(--navy)} .closing-pg{border-left:5px solid var(--navy-dark)}
+
+/* Page body */
+.page-body{padding:24px 28px 28px}
+
+/* ── COVER ──────────────────────────────────────── */
+.cover-pg{
+  background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,#1e5277 100%);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:60px 48px 56px;margin-bottom:28px;color:#fff;
+  border-left:none;position:relative;overflow:hidden;
+}
+.cover-pg::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:320px;height:320px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.cover-title{font-size:52px;font-weight:800;line-height:1.1;margin-bottom:12px}
+.cover-title span{color:#90CDF4}
+.cover-sub{font-size:26px;font-weight:300;color:rgba(255,255,255,.8);margin-bottom:28px}
+.cover-line{width:280px;height:2px;background:var(--accent);margin-bottom:22px}
+.cover-meta{display:flex;gap:32px;flex-wrap:wrap}
+.cover-meta-item{font-size:13px;color:rgba(255,255,255,.7)}
+.cover-meta-item strong{color:#fff;display:block;font-size:14px;margin-bottom:2px}
+
+/* ── DAY DIVIDER ────────────────────────────────── */
+.day-divider{
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  margin-bottom:28px;padding:40px 40px 36px;
+  color:#fff;display:flex;align-items:flex-start;gap:32px;
+  border-left:none;
+}
+.d1-div{background:linear-gradient(135deg,var(--d1),#3a6da8)}
+.d2-div{background:linear-gradient(135deg,var(--d2),#38a169)}
+.d3-div{background:linear-gradient(135deg,var(--d3),#805ad5)}
+.d4-div{background:linear-gradient(135deg,var(--d4),#dd6b20)}
+.d5-div{background:linear-gradient(135deg,var(--d5),#2980b9)}
+.d6-div{background:linear-gradient(135deg,var(--d6),#c0392b)}
+.day-divider-num{font-size:68px;font-weight:900;line-height:1;opacity:.35;min-width:80px}
+.day-divider-content h2{font-size:32px;font-weight:700;margin-bottom:8px}
+.day-divider-content p{font-size:14px;opacity:.85;line-height:1.6}
+
+/* ── TYPOGRAPHY ──────────────────────────────────── */
+h1{font-size:28px;font-weight:700;color:var(--navy);margin-bottom:10px}
+h2{font-size:22px;font-weight:700;color:var(--navy);margin:22px 0 10px}
+h3{font-size:17px;font-weight:700;color:var(--text);margin:18px 0 8px}
+h2:first-child,h1:first-child{margin-top:0}
+p{margin-bottom:12px;color:var(--text)}
+strong{font-weight:700}
+em{font-style:italic}
+
+/* ── LISTS ───────────────────────────────────────── */
+ul,ol{padding-left:22px;margin-bottom:14px}
+li{margin-bottom:5px}
+ul li::marker{color:var(--accent)}
+
+/* ── TABLES ──────────────────────────────────────── */
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:13px}
+td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:#f9fafb}
+tr:hover td{background:#EEF2FF}
+
+/* ── CODE / PRE ──────────────────────────────────── */
+code{background:#EEF2FF;color:#1e3a8a;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px}
+pre{
+  background:#1A202C;color:#E2E8F0;
+  padding:18px 20px;border-radius:8px;
+  font-family:'Courier New',monospace;font-size:13px;line-height:1.6;
+  overflow-x:auto;margin:14px 0;white-space:pre;
+}
+
+/* ── BLOCKQUOTE / CALLOUT ────────────────────────── */
+blockquote{
+  border-left:4px solid var(--accent);
+  background:#EBF5FB;padding:12px 18px;
+  border-radius:0 8px 8px 0;margin:14px 0;
+  font-style:italic;color:#2c3e50;
+}
+.live-callout{
+  background:#FEF3C7;border-left:4px solid #F59E0B;
+  padding:12px 18px;border-radius:0 8px 8px 0;margin:14px 0;
+  font-weight:600;color:#92400E;font-style:normal;
+}
+.live-callout::before{content:"🎙 LIVE SESSION — ";font-weight:800}
+
+/* ── IMAGES ──────────────────────────────────────── */
+.img-block{
+  margin:18px 0;text-align:center;
+}
+.img-block img{
+  max-width:100%;border-radius:8px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 16px rgba(0,0,0,.12);
+}
+.img-caption{
+  font-size:12px;color:var(--muted);margin-top:8px;font-style:italic
+}
+
+/* ── LENDER GRID ─────────────────────────────────── */
+.lender-grid{
+  display:flex;flex-wrap:wrap;gap:16px;margin:20px 0;
+}
+.lender-card{
+  background:var(--off-white);border:1px solid var(--border);
+  border-radius:8px;padding:16px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  min-width:110px;flex:1;max-width:150px;
+}
+.lender-card img{height:40px;max-width:110px;object-fit:contain}
+.lender-card .lender-name{font-weight:700;font-size:13px;text-align:center;color:var(--navy)}
+.lender-card .lender-type{font-size:11px;color:var(--muted);text-align:center;background:var(--border);padding:2px 8px;border-radius:10px}
+
+/* ── OWNER CARDS ─────────────────────────────────── */
+.owner-grid{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0}
+.owner-card{
+  flex:1;min-width:180px;
+  border-radius:8px;padding:18px 20px;color:#fff;
+}
+.owner-card .region{font-size:12px;font-weight:600;opacity:.8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.owner-card .name{font-size:20px;font-weight:700}
+.oc-d1{background:var(--d1)} .oc-d2{background:var(--d2)} .oc-d3{background:var(--d3)}
+
+/* ── METRIC CARDS ────────────────────────────────── */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0}
+.metric-card{
+  border-radius:8px;border:1px solid var(--border);
+  padding:18px 20px;background:var(--white);
+}
+.metric-val{font-size:32px;font-weight:800;margin-bottom:4px}
+.metric-label{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.metric-desc{font-size:12px;color:var(--muted)}
+.m1 .metric-val{color:var(--d1)} .m2 .metric-val{color:var(--d2)}
+.m3 .metric-val{color:var(--d4)} .m4 .metric-val{color:var(--d6)}
+
+/* ── TEAM CARDS ──────────────────────────────────── */
+.team-section{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0}
+@media(max-width:640px){.team-section{grid-template-columns:1fr}}
+.team-card{background:var(--off-white);border:1px solid var(--border);border-radius:8px;padding:18px 20px}
+.team-card h3{margin-top:0;color:var(--navy)}
+
+/* ── CHECKLIST ───────────────────────────────────── */
+.checklist{list-style:none;padding:0;margin:12px 0}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 12px;margin-bottom:4px;
+  background:var(--off-white);border-radius:6px;font-size:14px;
+}
+.checklist li::before{content:"☐";font-size:16px;color:var(--d4);flex-shrink:0;margin-top:1px}
+
+/* ── SLACK CHANNEL ───────────────────────────────── */
+.slack-ch{
+  background:var(--off-white);border:1px solid var(--border);
+  border-radius:8px;padding:14px 18px;margin:10px 0;
+}
+.slack-ch-name{font-family:monospace;font-weight:700;color:#4A154B;font-size:15px;margin-bottom:6px}
+.slack-ch-desc{font-size:14px;color:var(--text)}
+
+/* ── TRIAGE TABLE ────────────────────────────────── */
+.triage-row{display:flex;gap:0;margin-bottom:4px;border-radius:6px;overflow:hidden;font-size:14px}
+.triage-issue{flex:1;background:var(--off-white);padding:10px 14px;border:1px solid var(--border);border-right:none}
+.triage-who{width:280px;background:#ECFDF5;padding:10px 14px;border:1px solid #BBF7D0;font-weight:600;color:#166534;flex-shrink:0}
+
+/* ── DIVIDER ─────────────────────────────────────── */
+hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+/* ── LIFECYCLE FLOW ──────────────────────────────── */
+.lc-wrap{margin:20px 0}
+.lc-row{display:flex;align-items:stretch;gap:6px;margin-bottom:6px}
+.lc-card{
+  flex:1;min-width:0;
+  border-radius:12px;border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  padding:16px 10px 14px;
+  text-align:center;
+  transition:transform .15s,box-shadow .15s;
+  position:relative;background:#fff;
+}
+.lc-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.13)}
+.lc-badge{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;color:#fff;
+  margin:0 auto 8px;box-shadow:0 3px 8px rgba(0,0,0,.2);
+}
+.lc-title{font-size:12px;font-weight:700;color:var(--text);line-height:1.45}
+.lc-tag{
+  display:inline-block;margin-top:6px;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase;
+}
+.lc-arrow{
+  display:flex;align-items:center;justify-content:center;
+  color:#94A3B8;font-size:22px;flex-shrink:0;width:18px;align-self:center;
+}
+.lc-turn{
+  display:flex;justify-content:flex-end;align-items:center;
+  padding:0 10px;margin:-2px 0;
+}
+.lc-turn-inner{
+  width:24px;height:40px;
+  border-right:3px solid #CBD5E1;border-bottom:3px solid #CBD5E1;
+  border-radius:0 0 12px 0;
+}
+.lc-turn-arrow{
+  color:#CBD5E1;font-size:20px;margin-top:24px;margin-left:-12px;line-height:1;
+}
+/* Phase colour tokens */
+.lc-prep .lc-badge{background:linear-gradient(135deg,#2C5282,#4299E1)}
+.lc-prep .lc-tag{background:#EBF5FB;color:#2C5282}
+.lc-build .lc-badge{background:linear-gradient(135deg,#276749,#48BB78)}
+.lc-build .lc-tag{background:#E6FFFA;color:#276749}
+.lc-test .lc-badge{background:linear-gradient(135deg,#553C9A,#9F7AEA)}
+.lc-test .lc-tag{background:#FAF5FF;color:#553C9A}
+.lc-launch .lc-badge{background:linear-gradient(135deg,#C05621,#ED8936)}
+.lc-launch .lc-tag{background:#FFFAF0;color:#C05621}
+.lc-monitor .lc-badge{background:linear-gradient(135deg,#1A5276,#2E86C1)}
+.lc-monitor .lc-tag{background:#EBF8FF;color:#1A5276}
+
+/* ── FLOW STEPS ──────────────────────────────────── */
+.flow-steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:20px 0}
+.flow-step{
+  background:var(--off-white);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;
+  display:flex;gap:8px;align-items:center;
+}
+.step-num{
+  background:var(--navy);color:#fff;border-radius:50%;
+  width:22px;height:22px;min-width:22px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+}
+.step-text{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.flow-arrow{color:var(--accent);font-size:20px;font-weight:700;flex-shrink:0}
+
+/* ── NAV LOGO ────────────────────────────────────── */
+.nav-logo{height:28px;object-fit:contain;mix-blend-mode:screen;margin-left:16px;flex-shrink:0}
+
+/* ── DAY DIVIDER LOGO ────────────────────────────── */
+.dv-logo-wrap{margin-left:auto;flex-shrink:0;display:flex;align-items:center}
+.dv-logo-wrap img{height:32px;object-fit:contain;mix-blend-mode:screen}
+
+/* ── TOOL LOGO ───────────────────────────────────── */
+.tool-logo{height:36px;object-fit:contain;flex-shrink:0}
+.tool-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.tool-header h3{margin:0}
+
+/* ── SCROLL TO TOP ───────────────────────────────── */
+.back-top{
+  position:fixed;bottom:28px;right:28px;z-index:999;
+  background:var(--navy);color:#fff;width:42px;height:42px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  text-decoration:none;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.25);
+  transition:background .2s;
+}
+.back-top:hover{background:var(--accent)}
+
+/* ── CLOSING ─────────────────────────────────────── */
+.closing-content{text-align:center;padding:40px 28px 48px}
+.closing-content h1{font-size:38px;color:var(--navy);margin-bottom:12px}
+.closing-content p{font-size:17px;color:var(--muted)}
+.closing-line{width:200px;height:3px;background:var(--accent);margin:20px auto}
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<nav class="top-nav">
+  <div class="nav-brand">ClearGrid — AI Prompt Engineer Training</div>
+  <div class="nav-days" style="flex:1;justify-content:center">
+    <a href="#day1" class="d1">Day 1</a>
+    <a href="#day2" class="d2">Day 2</a>
+    <a href="#day3" class="d3">Day 3</a>
+    <a href="#day4" class="d4">Day 4</a>
+    <a href="#day5" class="d5">Day 5</a>
+    <a href="#day6" class="d6">Day 6</a>
+  </div>
+  <img src="../assets/cleargrid-logo.png" class="nav-logo" alt="ClearGrid">
+</nav>
+
+<div class="pages">
+
+<!-- ════════════════════════════════════════
+  COVER
+═════════════════════════════════════════ -->
+<div class="cover-pg" id="top">
+  <div class="cover-title">Clear<span>Grid</span></div>
+  <div class="cover-sub">AI Prompt Engineer Onboarding Training</div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>6 Training Days</strong>Duration</div>
+    <div class="cover-meta-item"><strong>Prompt Team</strong>Department</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  PAGE 2 — TRAINING OVERVIEW
+═════════════════════════════════════════ -->
+<div class="page intro" id="page-2">
+  <div class="page-head">
+    <span class="page-num">Page 2</span>
+    <span class="day-badge intro-badge">Overview</span>
+  </div>
+  <div class="page-body">
+    <h1>Training Overview</h1>
+    <p>This 6-day program prepares you to independently create, test, improve, and own AI voice agents at ClearGrid. By the end, you will be ready to contribute from Day 1.</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Day</th><th>Focus</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Day 1</strong></td><td>Your role, the team, lenders &amp; partners, project ownership, supporting teams, and how we communicate</td></tr>
+        <tr><td><strong>Day 2</strong></td><td>ClearVoice — the platform we use to build, configure, test, and monitor agents</td></tr>
+        <tr><td><strong>Day 3</strong></td><td>Prompt architecture — how we design and write voice agent prompts</td></tr>
+        <tr><td><strong>Day 4</strong></td><td>The full build and launch cycle: self-testing, QA handoff, project owner sign-off, and go-live</td></tr>
+        <tr><td><strong>Day 5</strong></td><td>Post-launch: live call monitoring, applying improvements, and owning your agents end-to-end</td></tr>
+        <tr><td><strong>Day 6</strong></td><td>Practical knowledge check (50 MCQ — pass at 75%+)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <h2>What You Will Be Able to Do</h2>
+    <ul>
+      <li>Understand the ClearGrid voice agent business and the lenders we work with</li>
+      <li>Know the team structure and who to go to for every type of issue</li>
+      <li>Use ClearVoice to build, configure, and monitor agents</li>
+      <li>Write strong, production-ready prompts using the ClearGrid structured template</li>
+      <li>Run pre-live stress tests and apply QA feedback</li>
+      <li>Monitor live calls and continuously improve agent performance</li>
+      <li>Own your agents from first draft to post-launch improvement</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  PAGE 3 — END-TO-END WORKFLOW
+═════════════════════════════════════════ -->
+<div class="page intro" id="page-3">
+  <div class="page-head">
+    <span class="page-num">Page 3</span>
+    <span class="day-badge intro-badge">Workflow</span>
+  </div>
+  <div class="page-body">
+    <h1>End-to-End Workflow</h1>
+    <p>This is the complete lifecycle of an AI Prompt Engineer at ClearGrid — from first briefing to continuous improvement.</p>
+
+    <!-- Row 1: Steps 1–5 -->
+    <div class="lc-wrap">
+      <div class="lc-row">
+        <div class="lc-card lc-prep">
+          <div class="lc-badge">1</div>
+          <div class="lc-title">Understand the Lender &amp; Context</div>
+          <span class="lc-tag">Prep</span>
+        </div>
+        <div class="lc-arrow">›</div>
+        <div class="lc-card lc-prep">
+          <div class="lc-badge">2</div>
+          <div class="lc-title">Collect Data &amp; Confirm Design</div>
+          <span class="lc-tag">Prep</span>
+        </div>
+        <div class="lc-arrow">›</div>
+        <div class="lc-card lc-build">
+          <div class="lc-badge">3</div>
+          <div class="lc-title">Build the Prompt</div>
+          <span class="lc-tag">Build</span>
+        </div>
+        <div class="lc-arrow">›</div>
+        <div class="lc-card lc-build">
+          <div class="lc-badge">4</div>
+          <div class="lc-title">Configure the Agent in ClearVoice</div>
+          <span class="lc-tag">Build</span>
+        </div>
+        <div class="lc-arrow">›</div>
+        <div class="lc-card lc-test">
+          <div class="lc-badge">5</div>
+          <div class="lc-title">Self-Test the Agent (10+ calls)</div>
+          <span class="lc-tag">Test</span>
+        </div>
+      </div>
+
+      <!-- Turn connector -->
+      <div class="lc-turn">
+        <div class="lc-turn-inner"></div>
+        <div class="lc-turn-arrow">↓</div>
+      </div>
+
+      <!-- Row 2: Steps 6–9 (right-to-left) -->
+      <div class="lc-row" style="flex-direction:row-reverse">
+        <div class="lc-card lc-test">
+          <div class="lc-badge">6</div>
+          <div class="lc-title">Send to QA &amp; Apply Feedback</div>
+          <span class="lc-tag">QA</span>
+        </div>
+        <div class="lc-arrow">‹</div>
+        <div class="lc-card lc-launch">
+          <div class="lc-badge">7</div>
+          <div class="lc-title">Build the Journey</div>
+          <span class="lc-tag">Launch</span>
+        </div>
+        <div class="lc-arrow">‹</div>
+        <div class="lc-card lc-monitor">
+          <div class="lc-badge">8</div>
+          <div class="lc-title">Monitor Live Calls</div>
+          <span class="lc-tag">Monitor</span>
+        </div>
+        <div class="lc-arrow">‹</div>
+        <div class="lc-card lc-monitor">
+          <div class="lc-badge">9</div>
+          <div class="lc-title">Apply Improvements</div>
+          <span class="lc-tag">Monitor</span>
+        </div>
+        <!-- spacer to align 4 cards to same width as 5 above -->
+        <div style="flex:1;min-width:0;visibility:hidden" class="lc-card lc-monitor"></div>
+      </div>
+    </div>
+    <h2>How Prompts Drive the Business</h2>
+    <p>The prompt is the brain of the agent. Everything the agent says, how it handles objections, when it escalates, and what outcome it logs — is entirely determined by how the prompt is written.</p>
+    <div class="team-section">
+      <div class="team-card" style="border-top:3px solid #27AE60">
+        <h3 style="color:#27AE60">Strong Prompt</h3>
+        <ul><li>More right-party contacts (RPC)</li><li>More payment promises collected (PTP)</li><li>Fewer unnecessary escalations</li><li>Calls that sound natural and compliant</li></ul>
+      </div>
+      <div class="team-card" style="border-top:3px solid #E74C3C">
+        <h3 style="color:#E74C3C">Weak Prompt</h3>
+        <ul><li>Missed payment commitments</li><li>Compliance breaches</li><li>Customer complaints</li><li>Agents that break under pressure</li></ul>
+      </div>
+    </div>
+    <blockquote><strong>The prompt is the product. Writing it well is the job.</strong></blockquote>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  DAY 1 DIVIDER
+═════════════════════════════════════════ -->
+<div class="day-divider d1-div" id="day1">
+  <div class="day-divider-num">1</div>
+  <div class="day-divider-content">
+    <h2>Role, Team &amp; Communication</h2>
+    <p>Your role &nbsp;·&nbsp; The team &nbsp;·&nbsp; Lenders &amp; partners &nbsp;·&nbsp; Project ownership &nbsp;·&nbsp; Supporting teams &nbsp;·&nbsp; Slack &nbsp;·&nbsp; Notion &amp; Asana &nbsp;·&nbsp; Daily meetings</p>
+  </div>
+  <div class="dv-logo-wrap"><img src="../assets/cleargrid-logo.png" alt="ClearGrid"></div>
+</div>
+
+<!-- PAGE 4 — THE ROLE -->
+<div class="page d1" id="page-4">
+  <div class="page-head"><span class="page-num">Page 4</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>AI Prompt Engineer at ClearGrid</h1>
+    <p>You are responsible for the <strong>full lifecycle of AI voice agents</strong> that collect payment promises from customers on behalf of ClearGrid's lender and bank partners. This is not a passive role — you own every agent you create.</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Responsibility</th><th>What It Means</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Create Prompts</strong></td><td>Write new voice agent prompts from scratch using the ClearGrid structured template</td></tr>
+        <tr><td><strong>Revamp Agents</strong></td><td>Restructure and improve existing agents based on performance data and call analysis</td></tr>
+        <tr><td><strong>Test Agents</strong></td><td>Run self-testing calls before QA and catch issues before they go live</td></tr>
+        <tr><td><strong>Analyze Transcripts</strong></td><td>Review live call transcripts to find missing scenarios, logic gaps, and improvement opportunities</td></tr>
+        <tr><td><strong>Review Metrics</strong></td><td>Track RPC rate, PTP rate, call duration, and escalation rate and act on the data</td></tr>
+        <tr><td><strong>Apply QA Feedback</strong></td><td>Implement notes from the QA team and re-test before moving forward</td></tr>
+        <tr><td><strong>Monitor Live Agents</strong></td><td>Continuously listen to live calls and keep agents performing at target</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <h2>What Is Expected From You</h2>
+    <ul>
+      <li>Every prompt must be tested before it goes to QA</li>
+      <li>Every change must be based on data — calls, transcripts, and metrics</li>
+      <li>Every active agent is your responsibility, even after it goes live</li>
+      <li>You communicate clearly on Slack, update Asana tickets, and document on Notion</li>
+      <li>You attend both morning calls every day</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PAGE 5 — MEET THE TEAM -->
+<div class="page d1" id="page-5">
+  <div class="page-head"><span class="page-num">Page 5</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>Meet the Team</h1>
+    <div class="team-section">
+      <div class="team-card" style="border-top:4px solid var(--d1)">
+        <h3>Head of Conversation Design</h3>
+        <p style="font-size:20px;font-weight:700;color:var(--navy)">Oliver</p>
+        <p>Leads the team, sets standards, and owns the overall direction of how ClearGrid agents are designed and improved.</p>
+      </div>
+      <div class="team-card" style="border-top:4px solid var(--d1)">
+        <h3>The Prompt Team</h3>
+        <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tareq</strong></td><td>AI Prompt Engineer</td></tr>
+            <tr><td><strong>Daniah</strong></td><td>AI Prompt Engineer</td></tr>
+            <tr><td><strong>Sara</strong></td><td>AI Prompt Engineer</td></tr>
+            <tr><td><strong>Awsam</strong></td><td>AI Prompt Engineer</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p style="font-size:13px;color:var(--muted)">Tasks are shared, discussed, and tracked as a team via <code>#prompt-team</code></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6 — LENDERS & PARTNERS -->
+<div class="page d1" id="page-6">
+  <div class="page-head"><span class="page-num">Page 6</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>Lenders &amp; Partners</h1>
+    <p>ClearGrid builds voice agents for lenders and banks across the region. Each partner has its own rules, tone expectations, payment channels, approved consequences, and customer profiles.</p>
+    <blockquote><strong>Never assume that a rule or approach from one lender applies to another.</strong></blockquote>
+    <div class="lender-grid">
+      <div class="lender-card"><img src="../assets/tanara.png" alt="Tamara"><span class="lender-name">Tamara</span><span class="lender-type">BNPL Lender</span></div>
+      <div class="lender-card"><img src="../assets/tabby.png" alt="Tabby"><span class="lender-name">Tabby</span><span class="lender-type">BNPL Lender</span></div>
+      <div class="lender-card"><img src="../assets/cashnow.jpg" alt="CashNow"><span class="lender-name">CashNow</span><span class="lender-type">Lender</span></div>
+      <div class="lender-card"><img src="../assets/emirates_nbd_logo.png" alt="Emirates NBD"><span class="lender-name">Emirates NBD</span><span class="lender-type">Bank</span></div>
+      <div class="lender-card"><img src="../assets/emirates islamic.jpg" alt="Emirates Islamic"><span class="lender-name">Emirates Islamic</span><span class="lender-type">Bank</span></div>
+      <div class="lender-card"><img src="../assets/mashreq.png" alt="Mashreq"><span class="lender-name">Mashreq Bank</span><span class="lender-type">Bank</span></div>
+      <div class="lender-card"><img src="../assets/hsbc.png" alt="HSBC"><span class="lender-name">HSBC Bank</span><span class="lender-type">Bank</span></div>
+    </div>
+    <h2>BNPL vs. Bank</h2>
+    <p><strong>BNPL</strong> (Buy Now Pay Later) lenders like Tamara and Tabby deal with installment-based consumer purchases. Customers may be younger, digital-first, and amounts tend to be smaller.</p>
+    <p><strong>Banks</strong> like Emirates NBD, Mashreq, and HSBC deal with credit products, loans, and cards. Escalation paths and compliance requirements are more complex.</p>
+  </div>
+</div>
+
+<!-- PAGE 7 — PROJECT OWNERSHIP -->
+<div class="page d1" id="page-7">
+  <div class="page-head"><span class="page-num">Page 7</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>Project Ownership</h1>
+    <p>Every lender project has an assigned project owner who approves the agent for go-live and is the final decision-maker on agent design.</p>
+    <div class="owner-grid">
+      <div class="owner-card oc-d1"><div class="region">UAE Projects</div><div class="name">Sami Salti</div></div>
+      <div class="owner-card oc-d2"><div class="region">KSA Projects</div><div class="name">Faisal Alsugair</div></div>
+      <div class="owner-card oc-d3"><div class="region">Banking Projects</div><div class="name">Rhitesh &amp; Shyam</div></div>
+    </div>
+    <h2>What the Project Owner Does</h2>
+    <ul>
+      <li>Reviews the agent after self-testing and QA</li>
+      <li>Gives the green light (or feedback) before go-live</li>
+      <li>Makes high-level decisions about the agent design and lender requirements</li>
+      <li>Is the first point of contact for anything specific to their portfolio</li>
+    </ul>
+    <p><strong>UAE agent → Sami &nbsp;|&nbsp; KSA agent → Faisal &nbsp;|&nbsp; Banking agent → Rhitesh or Shyam</strong></p>
+  </div>
+</div>
+
+<!-- PAGE 8 — SUPPORTING TEAMS -->
+<div class="page d1" id="page-8">
+  <div class="page-head"><span class="page-num">Page 8</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>Supporting Teams</h1>
+    <div class="team-section">
+      <div class="team-card">
+        <h3>Engineering Team</h3>
+        <p style="font-weight:600;color:var(--navy)">Sandeep &nbsp;·&nbsp; Praveen &nbsp;·&nbsp; Sameer Soni</p>
+        <p>Owns and maintains ClearVoice and the technical infrastructure. Handles platform bugs, data pipeline issues, API integrations, and anything requiring backend work.</p>
+        <p><strong>Reach them for:</strong> Platform issues, technical agent errors, data pipeline investigations.</p>
+      </div>
+      <div class="team-card">
+        <h3>QA Team</h3>
+        <p style="font-weight:600;color:var(--navy)">Yasmin Mostafa (Manager) &nbsp;·&nbsp; Naglaa &nbsp;·&nbsp; Usman Azhar &nbsp;·&nbsp; Menna Mansour</p>
+        <p>Independent testing checkpoint before any agent goes live. Runs structured test calls, scores against a QA sheet, and provides written feedback.</p>
+        <p>QA does not build the prompt — they are a separate quality layer. Reached via <code>#ai-qa</code>.</p>
+      </div>
+    </div>
+    <div class="team-card" style="margin-top:16px">
+      <h3>Journey Builder — Noha</h3>
+      <p>A journey is the technical setup that connects the voice agent to real customer data, so calls can be triggered on schedule. Noha sets up the data flow, the trigger, and the payload structure.</p>
+      <blockquote style="margin-top:10px">If an agent is not live and there are no calls being triggered, the first person to reach is <strong>Noha</strong>. It is almost always a journey issue, not a prompt issue.</blockquote>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9 — SLACK -->
+<div class="page d1" id="page-9">
+  <div class="page-head"><span class="page-num">Page 9</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
+      <h1 style="margin:0">Communication — Slack</h1>
+      <img src="../assets/slack.png" style="height:52px;object-fit:contain;border-radius:10px;flex-shrink:0" alt="Slack">
+    </div>
+    <p>Slack is the team's primary communication tool. <strong>You can reach anyone on Slack.</strong></p>
+    <div class="slack-ch">
+      <div class="slack-ch-name">#prompt-team</div>
+      <div class="slack-ch-desc">Main channel for the prompt team. Tasks are posted and picked up here. Updates, questions, and daily coordination all happen here. <strong>Check every morning before you start work.</strong></div>
+    </div>
+    <div class="slack-ch">
+      <div class="slack-ch-name">#ai-qa</div>
+      <div class="slack-ch-desc">Used to hand off agents to the QA team. Post here when your agent is tested and ready for review. Tag the team and include the agent name and project.</div>
+    </div>
+    <div class="slack-ch">
+      <div class="slack-ch-name">Dispute Channels (per lender)</div>
+      <div class="slack-ch-desc">Each lender has a dedicated dispute channel. When the AI agent detects a dispute during a live call, it flags the call to a human agent through this channel. Used for cases that need a human — already paid, amount disputes, escalation requests. The AI agent routes and closes cleanly.</div>
+    </div>
+    <div class="slack-ch" style="border-left:4px solid #E74C3C;background:#FEF2F2">
+      <div class="slack-ch-name" style="color:#991B1B">#threats</div>
+      <div class="slack-ch-desc">For sensitive cases: legal threats, police reports, self-harm, abuse, or any call that raises a compliance or safety concern. Post immediately if you encounter one during live call monitoring.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 10 — NOTION & ASANA -->
+<div class="page d1" id="page-10">
+  <div class="page-head"><span class="page-num">Page 10</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>Notion &amp; Asana</h1>
+    <div class="team-section">
+      <div class="team-card" style="border-top:4px solid #000">
+        <div class="tool-header">
+          <img src="../assets/Notion_app_logo.png" class="tool-logo" alt="Notion">
+          <h3 style="margin:0">Notion — Documentation Hub</h3>
+        </div>
+        <p>Everything that needs to be documented lives on Notion. <strong>Always check Notion before building a new prompt.</strong></p>
+        <ul>
+          <li>Conversation designs per client</li>
+          <li>Client-specific rules and reference material</li>
+          <li>All project trackers</li>
+          <li>Prompt templates and structural guides</li>
+          <li>Voice and style guides per partner</li>
+          <li>Handover documents and revamping plans</li>
+        </ul>
+      </div>
+      <div class="team-card" style="border-top:4px solid #F96854">
+        <div class="tool-header">
+          <img src="../assets/Asana-Logo.png" class="tool-logo" alt="Asana">
+          <h3 style="margin:0">Asana — Task Management</h3>
+        </div>
+        <p><strong>New prompt tickets:</strong></p>
+        <ul><li>Comment when passed to QA</li><li>Comment when launched</li><li>Comment on changes from original design</li></ul>
+        <p style="margin-top:10px"><strong>Fix tickets:</strong></p>
+        <ul><li>Comment describing what was changed</li><li>Comment when fix went live</li></ul>
+        <p style="margin-top:10px">When done → mark complete → move to <strong>Done</strong> column.</p>
+      </div>
+    </div>
+    <blockquote>Check Asana daily. Keep your tickets updated after every milestone.</blockquote>
+  </div>
+</div>
+
+<!-- PAGE 11 — DAILY MEETINGS -->
+<div class="page d1" id="page-11">
+  <div class="page-head"><span class="page-num">Page 11</span><span class="day-badge">Day 1</span></div>
+  <div class="page-body">
+    <h1>Daily Meetings</h1>
+    <div class="team-section">
+      <div class="team-card" style="border-top:4px solid var(--d1)">
+        <h3>Performance Call</h3>
+        <div class="table-wrap"><table>
+          <tr><td><strong>Who</strong></td><td>Everyone (company-wide)</td></tr>
+          <tr><td><strong>Purpose</strong></td><td>Daily performance review, strategic announcements, and goal alignment</td></tr>
+        </table></div>
+        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Includes broader stakeholders and leadership. Attend, listen, and note anything relevant to your work.</p>
+      </div>
+      <div class="team-card" style="border-top:4px solid var(--d2)">
+        <h3>Prompt Team Morning Catchup</h3>
+        <div class="table-wrap"><table>
+          <tr><td><strong>Who</strong></td><td>Prompt team</td></tr>
+          <tr><td><strong>Format</strong></td><td>Daily stand-up</td></tr>
+        </table></div>
+        <p style="margin-top:10px"><strong>Agenda every morning:</strong></p>
+        <ol style="font-size:14px">
+          <li><strong>Yesterday's wins</strong> — what did you complete?</li>
+          <li><strong>Today's plan</strong> — what are you working on?</li>
+          <li><strong>Blockers</strong> — anything stopping you?</li>
+          <li><strong>Task board review</strong> — assign / prioritize / urgent</li>
+        </ol>
+      </div>
+    </div>
+    <p>Come prepared. If you have a blocker, this is the moment to surface it.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  DAY 2 DIVIDER
+═════════════════════════════════════════ -->
+<div class="day-divider d2-div" id="day2">
+  <div class="day-divider-num">2</div>
+  <div class="day-divider-content">
+    <h2>ClearVoice Configuration</h2>
+    <p>What is ClearVoice &nbsp;·&nbsp; Dashboard &nbsp;·&nbsp; Projects &nbsp;·&nbsp; Agents &nbsp;·&nbsp; Agent Settings &nbsp;·&nbsp; Call History</p>
+  </div>
+  <div class="dv-logo-wrap"><img src="../assets/cleargrid-logo.png" alt="ClearGrid"></div>
+</div>
+
+<!-- PAGE 12 — CLEARVOICE INTRO -->
+<div class="page d2" id="page-12">
+  <div class="page-head"><span class="page-num">Page 12</span><span class="day-badge">Day 2</span></div>
+  <div class="page-body">
+    <h1>What Is ClearVoice?</h1>
+    <p>ClearVoice is one of <strong>ClearGrid's own products</strong>. It is the platform AI Prompt Engineers use to:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Action</th><th>What It Means</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Create</strong></td><td>Build new voice agents and configure them for a lender</td></tr>
+        <tr><td><strong>Configure</strong></td><td>Set voice, model, language, gateway, and all agent settings</td></tr>
+        <tr><td><strong>Test</strong></td><td>Run real inbound test calls before go-live</td></tr>
+        <tr><td><strong>Monitor</strong></td><td>Check live projects and daily call volumes</td></tr>
+        <tr><td><strong>Review</strong></td><td>Read call transcripts and listen to recordings after go-live</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote><strong>Getting a ClearVoice setting wrong — even one — can break the agent, route calls to the wrong destination, or cause unexpected behavior. Configuration is part of the job.</strong></blockquote>
+  </div>
+</div>
+
+<!-- PAGE 13 — DASHBOARD & QUEUES -->
+<div class="page d2" id="page-13">
+  <div class="page-head"><span class="page-num">Page 13</span><span class="day-badge">Day 2</span></div>
+  <div class="page-body">
+    <h1>Dashboard &amp; Project Queues</h1>
+    <div class="live-callout">This section will be covered through a live walkthrough of ClearVoice.</div>
+    <h2>Dashboard</h2>
+    <p>The first screen on login. Gives a high-level overview of active projects, call volumes, and activity. Use it to navigate to Project Queues, Projects, or Call History.</p>
+    <div class="img-block">
+      <img src="../assets/ClearVoice Dashboard.png" alt="ClearVoice Dashboard">
+      <div class="img-caption">ClearVoice Dashboard — overview of call volumes, account balance, and active campaigns</div>
+    </div>
+    <h2>Project Queues</h2>
+    <p>Shows all <strong>live and active projects</strong> in ClearVoice.</p>
+    <ul>
+      <li>See which projects are currently running</li>
+      <li>Check how many calls are being triggered per project daily</li>
+      <li>Spot drops, spikes, or unexpected changes in call volume</li>
+    </ul>
+    <div class="img-block">
+      <img src="../assets/Projects Queue.png" alt="ClearVoice Project Queues">
+      <div class="img-caption">Project Queues — live project data, call counts, and gateway assignments per campaign</div>
+    </div>
+    <blockquote>If call volume for a live agent stops or drops — Project Queues is the first place to check.</blockquote>
+  </div>
+</div>
+
+<!-- PAGE 14+15 — PROJECTS PAGE -->
+<div class="page d2" id="page-14">
+  <div class="page-head"><span class="page-num">Pages 14–15</span><span class="day-badge">Day 2</span></div>
+  <div class="page-body">
+    <h1>Projects Page</h1>
+    <p>Shows all projects inside ClearVoice — both live and non-live.</p>
+    <div class="img-block">
+      <img src="../assets/Projects Page.png" alt="ClearVoice Projects Page">
+      <div class="img-caption">ClearVoice Projects Page — all campaigns and deployments in one view</div>
+    </div>
+    <h2>How Projects Are Organized</h2>
+    <p>Projects represent a specific campaign or deployment for a lender. Inside each project, you create and manage multiple agents.</p>
+    <blockquote><strong>Every client must have a dedicated folder in ClearVoice that contains all of their projects.</strong></blockquote>
+    <h2>Common Mistakes to Avoid</h2>
+    <ul>
+      <li>Creating an agent under the wrong project</li>
+      <li>Not organizing projects inside a client folder</li>
+      <li>Mixing live and test agents in the same project without clear naming</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PAGE 16 — THE AGENT -->
+<div class="page d2" id="page-16">
+  <div class="page-head"><span class="page-num">Page 16</span><span class="day-badge">Day 2</span></div>
+  <div class="page-body">
+    <h1>The Agent</h1>
+    <p>Inside each project you can create agents. You can name them anything and create as many as needed.</p>
+    <div class="img-block">
+      <img src="../assets/Agent.png" alt="ClearVoice Agent view">
+      <div class="img-caption">ClearVoice Agent view — edit prompt, trigger test calls, check status</div>
+    </div>
+    <h2>What You Can Do From the Agent View</h2>
+    <ul>
+      <li><strong>Edit the prompt</strong> directly in the agent editor</li>
+      <li><strong>Trigger test calls</strong> — inbound test calls to stress-test your prompt in real conditions</li>
+      <li><strong>Check agent status</strong> — whether it is live or in testing mode</li>
+      <li><strong>Review recent call logs</strong> for that specific agent</li>
+    </ul>
+    <h2>Agent Settings</h2>
+    <div class="img-block">
+      <img src="../assets/agent settings.png" alt="ClearVoice Agent Settings">
+      <div class="img-caption">Agent Settings panel — get these right before testing</div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Setting</th><th>What It Controls</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Voice</strong></td><td>The text-to-speech voice model</td></tr>
+        <tr><td><strong>LLM Model</strong></td><td>The language model powering the agent's reasoning</td></tr>
+        <tr><td><strong>ASR</strong></td><td>Automatic Speech Recognition — converts customer speech into text</td></tr>
+        <tr><td><strong>Temperature</strong></td><td>Controls response consistency. Lower = more deterministic.</td></tr>
+        <tr><td><strong>Language</strong></td><td>The language and dialect the agent operates in</td></tr>
+        <tr><td><strong>Gateway</strong></td><td>The SIM / telephony line the agent uses to make calls</td></tr>
+      </tbody>
+    </table></div>
+    <div class="team-section" style="margin-top:16px">
+      <div class="team-card">
+        <h3>What Is the Gateway?</h3>
+        <p>The Gateway is like the <strong>SIM card</strong> the agent uses to call customers. It determines which number appears on screen, which country the call routes through, and which carrier is used.</p>
+        <p><strong>Must be specified correctly for each lender and country (KSA / UAE).</strong> Wrong gateway = wrong number = compliance breach.</p>
+      </div>
+      <div class="team-card">
+        <h3>What Is ASR?</h3>
+        <p><strong>ASR = Automatic Speech Recognition</strong></p>
+        <p>The technology that listens to what the customer says and converts their spoken words into text the language model can process.</p>
+        <p>ASR quality directly affects how well the agent understands mixed-language calls, accents, and noisy environments.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 17 — CALL HISTORY -->
+<div class="page d2" id="page-17">
+  <div class="page-head"><span class="page-num">Page 17</span><span class="day-badge">Day 2</span></div>
+  <div class="page-body">
+    <h1>Call History Page</h1>
+    <p>Where you review calls after they happen — during testing and after go-live.</p>
+    <div class="img-block">
+      <img src="../assets/Call History Page.png" alt="ClearVoice Call History">
+      <div class="img-caption">Call History — filter, transcript, recording, and UUID search</div>
+    </div>
+    <div class="live-callout">Filtering, searching by UUID, and reading transcripts will be demonstrated live.</div>
+    <h2>What You Can Do Here</h2>
+    <ul>
+      <li><strong>Filter by date</strong> to find calls from a specific period</li>
+      <li><strong>Filter by agent</strong> to narrow to a specific deployment</li>
+      <li><strong>Read full call transcripts</strong> turn by turn</li>
+      <li><strong>Listen to recordings</strong> to hear the call as it happened</li>
+      <li><strong>Search by UUID</strong> to find a specific call</li>
+    </ul>
+    <h2>What Is a UUID?</h2>
+    <p>Every call in ClearVoice is assigned a unique identifier called a <strong>UUID</strong>. Example:</p>
+    <pre>3f7a1bc2-94de-4e08-b6a1-2d305f9c8e10</pre>
+    <p>When you need to share a specific call with the team, Engineering, or QA — reference it by UUID. You can search by UUID directly in the Call History page.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  DAY 3 DIVIDER
+═════════════════════════════════════════ -->
+<div class="day-divider d3-div" id="day3">
+  <div class="day-divider-num">3</div>
+  <div class="day-divider-content">
+    <h2>Prompt Architecture</h2>
+    <p>Definitions &nbsp;·&nbsp; Prompt types &nbsp;·&nbsp; Metrics &nbsp;·&nbsp; Template &nbsp;·&nbsp; Turn loop &nbsp;·&nbsp; Call states &nbsp;·&nbsp; Triggers</p>
+  </div>
+  <div class="dv-logo-wrap"><img src="../assets/cleargrid-logo.png" alt="ClearGrid"></div>
+</div>
+
+<!-- PAGE 18 — KEY DEFINITIONS -->
+<div class="page d3" id="page-18">
+  <div class="page-head"><span class="page-num">Page 18</span><span class="day-badge">Day 3</span></div>
+  <div class="page-body">
+    <h1>Key Definitions</h1>
+    <p>These terms come up in every conversation, every ticket, and every QA review. Know them all.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th style="width:90px">Term</th><th>Definition</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RPC</strong></td><td><strong>Right Party Contact</strong> — The agent confirmed it is speaking with the correct person. Nothing about the account is disclosed until RPC is confirmed.</td></tr>
+        <tr><td><strong>NRPC</strong></td><td><strong>Non-Right Party Contact</strong> — Cannot confirm the correct person. The call ends cleanly with zero account detail.</td></tr>
+        <tr><td><strong>PTP</strong></td><td><strong>Promise to Pay</strong> — The customer commits to paying on a specific date. The primary outcome the agent is designed to collect.</td></tr>
+        <tr><td><strong>BP</strong></td><td><strong>Broken Promise</strong> — Customer previously made a PTP but did not pay.</td></tr>
+        <tr><td><strong>RTP</strong></td><td><strong>Refuse to Pay</strong> — Customer explicitly refused to pay.</td></tr>
+        <tr><td><strong>DNC</strong></td><td><strong>Do Not Call</strong> — Flag marking a customer who must not be called again.</td></tr>
+        <tr><td><strong>BNPL</strong></td><td><strong>Buy Now Pay Later</strong> — Installment-based consumer lending (Tamara, Tabby).</td></tr>
+        <tr><td><strong>ASR</strong></td><td><strong>Automatic Speech Recognition</strong> — Converts customer speech into text.</td></tr>
+        <tr><td><strong>A2A</strong></td><td><strong>Agent to Agent</strong> — Call stays within the AI system.</td></tr>
+        <tr><td><strong>A2H</strong></td><td><strong>Agent to Human</strong> — Call escalates to a human agent (disputes, hard stops, customer requests).</td></tr>
+        <tr><td><strong>Post Call Analysis</strong></td><td>Reviewing transcripts and recordings after a call to find gaps and improvement opportunities.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 19 — PROMPT TYPES -->
+<div class="page d3" id="page-19">
+  <div class="page-head"><span class="page-num">Page 19</span><span class="day-badge">Day 3</span></div>
+  <div class="page-body">
+    <h1>Types of Prompts</h1>
+    <p>The purpose of the call determines the type of prompt you write. Each type has a different tone, strategy, and objective.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Type</th><th>What It Is</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PTP</strong><br><small>Promise to Pay</small></td><td>The most common type. Calls a customer with an outstanding balance. Goal: collect a firm payment commitment on a specific date.</td></tr>
+        <tr><td><strong>BP</strong><br><small>Broken Promise</small></td><td>Targets customers who previously made a PTP but did not pay. Acknowledges the prior commitment and re-secures a new one. Slightly firmer in approach.</td></tr>
+        <tr><td><strong>RTP</strong><br><small>Refuse to Pay</small></td><td>Targets customers who explicitly refused. Focuses on consequences and approved options — not on repeating the same negotiation.</td></tr>
+        <tr><td><strong>Initial</strong></td><td>The very first call to a customer. Introduces the situation fresh. Tone is more neutral and informational to start.</td></tr>
+        <tr><td><strong>Reminder</strong></td><td>Sent approximately 24 hours before a scheduled payment date. Confirms the upcoming commitment — it is confirmation, not collection.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 20 — METRICS -->
+<div class="page d3" id="page-20">
+  <div class="page-head"><span class="page-num">Page 20</span><span class="day-badge">Day 3</span></div>
+  <div class="page-body">
+    <h1>Metrics That Matter</h1>
+    <p>Every agent is measured against these targets. Know them. Act on them.</p>
+    <div class="metric-grid">
+      <div class="metric-card m1">
+        <div class="metric-val">≥ 80%</div>
+        <div class="metric-label">RPC Rate</div>
+        <div class="metric-desc">of all calls reach the correct person (Right Party Contact)</div>
+      </div>
+      <div class="metric-card m2">
+        <div class="metric-val">60–70%</div>
+        <div class="metric-label">PTP Rate</div>
+        <div class="metric-desc">of RPC calls result in a valid payment promise</div>
+      </div>
+      <div class="metric-card m3">
+        <div class="metric-val">2–3 min</div>
+        <div class="metric-label">Avg Call Duration</div>
+        <div class="metric-desc">target — long calls signal looping or verbosity</div>
+      </div>
+      <div class="metric-card m4">
+        <div class="metric-val">&lt; 5%</div>
+        <div class="metric-label">Escalation Rate</div>
+        <div class="metric-desc">of calls escalate to a human agent (A2H)</div>
+      </div>
+    </div>
+    <h2>Why These Numbers Matter</h2>
+    <ul>
+      <li>Low RPC rate → data problem, or identity-gate issue in the prompt</li>
+      <li>Low PTP rate → agent reaching the right person but not converting — almost always a <strong>prompt problem</strong></li>
+      <li>Calls too long → agent is looping or being too verbose</li>
+      <li>High escalation rate → missing trigger coverage or incorrect hard-stop handling</li>
+    </ul>
+    <blockquote><strong>Metrics tell you where the problem is. Transcripts tell you what the problem is.</strong></blockquote>
+  </div>
+</div>
+
+<!-- PAGE 21 — PROMPT ARCHITECTURE OVERVIEW -->
+<div class="page d3" id="page-21">
+  <div class="page-head"><span class="page-num">Page 21</span><span class="day-badge">Day 3</span></div>
+  <div class="page-body">
+    <h1>Prompt Architecture — The Template</h1>
+    <p>All ClearGrid prompts follow a <strong>standardized 8-section template</strong>. This is mandatory — not optional.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Section</th><th>What It Does</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Header</strong></td><td>Agent identity, goal, fallback, output format, and tone</td></tr>
+        <tr><td><strong>1. Turn Loop</strong></td><td>Fixed execution order the agent runs before every single response</td></tr>
+        <tr><td><strong>2. Global Absolutes</strong></td><td>Non-negotiable rules that apply in every state, at every point in the call</td></tr>
+        <tr><td><strong>3. Voice &amp; Variables</strong></td><td>How the agent sounds and adapts; all data variables with fallbacks</td></tr>
+        <tr><td><strong>4. Call States</strong></td><td>The conversation stages — each is a self-contained rulebook with defined routes</td></tr>
+        <tr><td><strong>5. Trigger Lookup</strong></td><td>Situation-specific responses that override the current state when they match</td></tr>
+        <tr><td><strong>6. Example Turns</strong></td><td>Correct and incorrect handling examples drawn from real QA failures</td></tr>
+        <tr><td><strong>7. Pre-Output Scan</strong></td><td>Silent self-check the agent runs before every response</td></tr>
+        <tr><td><strong>8. Final Constraints</strong></td><td>Highest-priority rules and the conflict-resolution hierarchy</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 22 — TURN LOOP & ABSOLUTES -->
+<div class="page d3" id="page-22">
+  <div class="page-head"><span class="page-num">Pages 22–23</span><span class="day-badge">Day 3</span></div>
+  <div class="page-body">
+    <div class="live-callout">Template walkthrough will be done live with a real prompt example.</div>
+    <h1>The Turn Loop &amp; Global Absolutes</h1>
+    <div class="team-section">
+      <div class="team-card" style="border-top:4px solid var(--d3)">
+        <h3>The Turn Loop</h3>
+        <p>Runs in order before every single response — it cannot be skipped.</p>
+        <pre style="font-size:12px;margin-top:8px">1. IDENTITY GATE    Is RPC confirmed? If not, S0 is everything.
+2. TRIGGER SCAN     Match input against Section 5 triggers.
+3. INTENT CLASSIFY  Agreement / Refusal / Question /
+                    Hardship / Unclear
+4. ONE MOVE         Exactly one move from current state.
+                    End every turn with a question.
+5. PRE-OUTPUT SCAN  Run Section 7. Then speak.</pre>
+      </div>
+      <div class="team-card" style="border-top:4px solid var(--d6)">
+        <h3>Global Absolutes</h3>
+        <p>Hold in every state, at every point in the call.</p>
+        <ul style="font-size:13px;margin-top:8px">
+          <li>Never disclose account details before RPC is confirmed</li>
+          <li>Never use: court, prison, police, deportation, travel ban, threats, shaming</li>
+          <li>Never collect card numbers, CVV, OTP, PIN, or IBAN</li>
+          <li>Never invent figures, fees, dates, or policies</li>
+          <li>Silent tags on their own line — never spoken aloud</li>
+        </ul>
+      </div>
+    </div>
+    <h2>Variables: The Data That Powers the Call</h2>
+    <p>Every variable must have a fallback. A variable with no fallback will one day be spoken as a blank or a broken sentence.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Variable</th><th>What It Is</th><th>Fallback</th></tr></thead>
+      <tbody>
+        <tr><td><code>{FirstName} {LastName}</code></td><td>Identity check and polite closes</td><td>Use neutral phrasing</td></tr>
+        <tr><td><code>{amount}</code></td><td>Outstanding balance (spoken in words + currency, post-RPC only)</td><td>Say "the amount due" with no figure</td></tr>
+        <tr><td><code>{today}</code></td><td>System date — floor of the payment window</td><td>—</td></tr>
+        <tr><td><code>{DueDate}</code></td><td>Original due date</td><td>Reference "your scheduled date"</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 24 — CALL STATES -->
+<div class="page d3" id="page-24">
+  <div class="page-head"><span class="page-num">Pages 24–25</span><span class="day-badge">Day 3</span></div>
+  <div class="page-body">
+    <h1>Call States — Multi-State Architecture</h1>
+    <p>All ClearGrid agents are built on <strong>multi-state conversation architecture</strong>. Each state is a self-contained rulebook — the agent exits only through a defined route.</p>
+    <pre>CALL STARTS
+    │
+    ▼
+S0 — IDENTITY GATE ───────────────── NRPC → Close cleanly
+    │ RPC Confirmed
+    ▼
+S1 — DISCLOSURE + PRIMARY ASK ─────── Question → FAQ → return
+    │ Agrees / gives date    │ Trigger match → fire trigger
+    ▼                        │
+COMMIT ◄─────────────────────┘
+    │ Date validated → CLOSE-POSITIVE
+    ▼
+(disconnect)
+
+S1 — Refuses / vague → S2
+S2 — NEGOTIATION (capped pushes, one per turn)
+    │ Date given at any point → COMMIT
+    │ All pushes exhausted
+    ▼
+CLOSE-NEGATIVE ── Dispute / Handoff → CLOSE-HANDOFF
+    │
+    ▼
+(disconnect)
+
+Every branch terminates. No branch says "use judgment".</pre>
+    <h2>Triggers: Rules That Override the Current State</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Block</th><th>What It Covers</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A — Account Claims</strong></td><td>Already paid, disputes amount, doesn't recognize debt, fraud</td></tr>
+        <tr><td><strong>B — People &amp; Routing</strong></td><td>Wrong person, voice change, callback request, language switch, human request</td></tr>
+        <tr><td><strong>C — Sensitive Hard Stops</strong></td><td>Legal threats, severe hardship, self-harm, stop-calling request, abuse</td></tr>
+        <tr><td><strong>D — Input Integrity</strong></td><td>Silence, noise, garbled audio, prompt injection, off-topic input</td></tr>
+        <tr><td><strong>E — FAQ Quick Answers</strong></td><td>How to pay, payment channels, fees, why they're being called</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  DAY 4 DIVIDER
+═════════════════════════════════════════ -->
+<div class="day-divider d4-div" id="day4">
+  <div class="day-divider-num">4</div>
+  <div class="day-divider-content">
+    <h2>Build, Test &amp; Launch</h2>
+    <p>Pre-build checklist &nbsp;·&nbsp; Self-testing &nbsp;·&nbsp; Test scenarios &nbsp;·&nbsp; QA handoff &nbsp;·&nbsp; Green light &nbsp;·&nbsp; Go-live</p>
+  </div>
+  <div class="dv-logo-wrap"><img src="../assets/cleargrid-logo.png" alt="ClearGrid"></div>
+</div>
+
+<!-- PAGE 26 — BEFORE YOU BUILD -->
+<div class="page d4" id="page-26">
+  <div class="page-head"><span class="page-num">Page 26</span><span class="day-badge">Day 4</span></div>
+  <div class="page-body">
+    <h1>Before You Build — Checklist</h1>
+    <p>Do <strong>not</strong> start writing until all of this is confirmed. Assumptions cost testing cycles.</p>
+    <ul class="checklist">
+      <li>Read the conversation design for this client on Notion</li>
+      <li>Confirm the agent type (PTP / BP / RTP / Initial / Reminder)</li>
+      <li>Confirm the data payload and all expected variables</li>
+      <li>Confirm approved consequences for this lender</li>
+      <li>Confirm available payment channels</li>
+      <li>Confirm escalation and hard-stop rules</li>
+      <li>Review the voice and style guide on Notion</li>
+      <li>Check the Asana ticket for design notes and instructions</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PAGE 27 — SELF-TESTING -->
+<div class="page d4" id="page-27">
+  <div class="page-head"><span class="page-num">Page 27</span><span class="day-badge">Day 4</span></div>
+  <div class="page-body">
+    <h1>Self-Testing</h1>
+    <div class="live-callout">Live test call walkthrough will be demonstrated.</div>
+    <p>Before any agent goes to QA, you must complete your own structured test. This is mandatory.</p>
+    <blockquote style="font-size:18px;font-style:normal"><strong>Minimum 10 test calls per agent before handing off to QA.</strong></blockquote>
+    <h2>How to Run a Test Call</h2>
+    <p>Test calls are triggered from the agent view in ClearVoice. Fill in the customer variables before calling:</p>
+    <div class="img-block">
+      <img src="../assets/live testing.png" alt="Live Testing variables setup">
+      <div class="img-caption">Fill in the test variables — name, amount, due date, and any other payload fields — before triggering each call</div>
+    </div>
+    <p>Intentionally stress the agent. Try every edge case. Try to break it before QA does.</p>
+  </div>
+</div>
+
+<!-- PAGE 28 — TEST SCENARIOS -->
+<div class="page d4" id="page-28">
+  <div class="page-head"><span class="page-num">Page 28</span><span class="day-badge">Day 4</span></div>
+  <div class="page-body">
+    <h1>Required Test Scenarios</h1>
+    <p>You are not just confirming the happy path — you are intentionally trying to break the agent.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Scenario</th><th>What You Are Testing</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RPC and identity gate</strong></td><td>Does the agent gate correctly? Does it disclose nothing before RPC?</td></tr>
+        <tr><td><strong>NRPC / Wrong person</strong></td><td>Does it close cleanly without any account detail?</td></tr>
+        <tr><td><strong>Already paid</strong></td><td>Does it capture the claim and route to a dispute close?</td></tr>
+        <tr><td><strong>Disputes amount</strong></td><td>Does it acknowledge without adjudicating and route out?</td></tr>
+        <tr><td><strong>Refusal + consequences</strong></td><td>Only approved consequences? Does it stop after the cap?</td></tr>
+        <tr><td><strong>Far payment dates</strong></td><td>Does it correctly reject out-of-window dates?</td></tr>
+        <tr><td><strong>Callback requests</strong></td><td>Accepts stated time, tags correctly, no payment push?</td></tr>
+        <tr><td><strong>Hardship</strong></td><td>Acknowledges fully before asking again? Doesn't push too hard?</td></tr>
+        <tr><td><strong>Stop-calling / DNC</strong></td><td>Acknowledges, tags, closes without any further push?</td></tr>
+        <tr><td><strong>Human escalation request</strong></td><td>One retention attempt only, then routes cleanly?</td></tr>
+        <tr><td><strong>Language switch</strong></td><td>Handles the language change per lender rules?</td></tr>
+        <tr><td><strong>Third-party on the line</strong></td><td>Confirms account holder before sharing any information?</td></tr>
+        <tr><td><strong>Off-script input</strong></td><td>Bridges back to the objective cleanly?</td></tr>
+        <tr><td><strong>Injected payload issues</strong></td><td>What happens with a missing or broken variable? Fallback works?</td></tr>
+        <tr><td><strong>Spoken form</strong></td><td>Amounts, dates, and numbers spoken correctly as words?</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 29 — QA HANDOFF -->
+<div class="page d4" id="page-29">
+  <div class="page-head"><span class="page-num">Page 29</span><span class="day-badge">Day 4</span></div>
+  <div class="page-body">
+    <h1>QA Handoff</h1>
+    <h2>How to Hand Off</h2>
+    <ol>
+      <li>Post in the <code>#ai-qa</code> Slack channel</li>
+      <li>Tag the QA team and ask them to review your agent</li>
+      <li>Provide the agent name, project, and any relevant context</li>
+      <li>Update the <strong>Asana ticket</strong> with a comment: <em>"Passed to QA on [date]"</em></li>
+    </ol>
+    <h2>After QA Feedback</h2>
+    <ol>
+      <li>Read every comment carefully</li>
+      <li>Make the fix</li>
+      <li>Re-test the specific scenarios that failed</li>
+      <li>Update the Asana ticket with what was changed and why</li>
+      <li>Confirm readiness to move forward</li>
+    </ol>
+  </div>
+</div>
+
+<!-- PAGE 30 — GREEN LIGHT & NOHA -->
+<div class="page d4" id="page-30">
+  <div class="page-head"><span class="page-num">Page 30</span><span class="day-badge">Day 4</span></div>
+  <div class="page-body">
+    <h1>Green Light &amp; Journey Build</h1>
+    <h2>Project Owner Sign-Off</h2>
+    <div class="owner-grid">
+      <div class="owner-card oc-d1"><div class="region">UAE</div><div class="name">Sami Salti</div></div>
+      <div class="owner-card oc-d2"><div class="region">KSA</div><div class="name">Faisal Alsugair</div></div>
+      <div class="owner-card oc-d3"><div class="region">Banking</div><div class="name">Rhitesh or Shyam</div></div>
+    </div>
+    <p>The project owner tests the agent and gives the green light — or final feedback. Once confirmed, move to the journey build.</p>
+    <h2>Journey Build with Noha</h2>
+    <p>After the green light, contact <strong>Noha</strong> to build the journey.</p>
+    <ul>
+      <li>Brief her on what the agent expects in its payload</li>
+      <li>She sets up the data flow, trigger schedule, and call configuration</li>
+    </ul>
+    <blockquote><strong>The agent cannot go live without a journey.</strong> Once it is built and final settings are confirmed — the agent is ready for go-live. Add a launch comment on the Asana ticket.</blockquote>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  DAY 5 DIVIDER
+═════════════════════════════════════════ -->
+<div class="day-divider d5-div" id="day5">
+  <div class="day-divider-num">5</div>
+  <div class="day-divider-content">
+    <h2>Live Monitoring &amp; Improvements</h2>
+    <p>Call listening &nbsp;·&nbsp; Issue triage &nbsp;·&nbsp; Applying improvements &nbsp;·&nbsp; End-to-end ownership</p>
+  </div>
+  <div class="dv-logo-wrap"><img src="../assets/cleargrid-logo.png" alt="ClearGrid"></div>
+</div>
+
+<!-- PAGE 31 — LIVE MONITORING -->
+<div class="page d5" id="page-31">
+  <div class="page-head"><span class="page-num">Page 31</span><span class="day-badge">Day 5</span></div>
+  <div class="page-body">
+    <h1>Live Call Monitoring</h1>
+    <p>After go-live, the job is not done. <strong>Call listening is a core part of your daily workflow.</strong></p>
+    <p>Use <strong>ClearVoice Call History</strong> to filter, read transcripts, and listen to recordings.</p>
+    <h2>What to Check in Every Call Review</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>What to Check</th><th>What It Tells You</th></tr></thead>
+      <tbody>
+        <tr><td>Are disputes routing correctly?</td><td>Is the dispute tag firing when it should?</td></tr>
+        <tr><td>Are sentences within the word limit?</td><td>Is the agent being concise and natural?</td></tr>
+        <tr><td>Are all instructions being followed?</td><td>Correct flow, approved consequences, global absolutes applied?</td></tr>
+        <tr><td>Are correct solutions being offered?</td><td>Only real, approved payment options for this lender?</td></tr>
+        <tr><td>Are there missing scenarios?</td><td>Are customers saying things the agent isn't handling well?</td></tr>
+        <tr><td>Are variables rendering correctly?</td><td>Name, amount, and date coming through as expected?</td></tr>
+        <tr><td>Are fallbacks working?</td><td>When a variable is missing, is the fallback being used?</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:12px;color:var(--muted);font-size:13px">All prompt edits apply to the <strong>next day's calls</strong>.</p>
+  </div>
+</div>
+
+<!-- PAGE 32 — ISSUE TRIAGE -->
+<div class="page d5" id="page-32">
+  <div class="page-head"><span class="page-num">Page 32</span><span class="day-badge">Day 5</span></div>
+  <div class="page-body">
+    <h1>Issue Triage — Who to Reach</h1>
+    <blockquote><strong>Always ask the prompt team first.</strong> Do not escalate externally before checking internally.</blockquote>
+    <div style="margin-top:16px">
+      <div class="triage-row"><div class="triage-issue">Missing names, amounts, or dates in calls</div><div class="triage-who">→ Data team</div></div>
+      <div class="triage-row"><div class="triage-issue">Agent not triggered — no calls going out</div><div class="triage-who">→ Noha (journey)</div></div>
+      <div class="triage-row"><div class="triage-issue">Prompt logic gap, missing scenario, wrong wording</div><div class="triage-who">→ Fix it yourself</div></div>
+      <div class="triage-row"><div class="triage-issue">ClearVoice platform or technical error</div><div class="triage-who">→ Engineering (Sandeep / Praveen / Sameer)</div></div>
+      <div class="triage-row"><div class="triage-issue" style="border-left:3px solid #E74C3C">Threats, legal threats, police, sensitive calls</div><div class="triage-who" style="background:#FEE2E2;color:#991B1B;border-color:#FECACA">→ #threats</div></div>
+      <div class="triage-row"><div class="triage-issue">UAE project decisions or approvals</div><div class="triage-who">→ Sami Salti</div></div>
+      <div class="triage-row"><div class="triage-issue">KSA project decisions or approvals</div><div class="triage-who">→ Faisal Alsugair</div></div>
+      <div class="triage-row"><div class="triage-issue">Banking project decisions or approvals</div><div class="triage-who">→ Rhitesh or Shyam</div></div>
+    </div>
+    <h2 style="margin-top:24px">Applying Improvements</h2>
+    <ol>
+      <li>Identify the issue clearly from the transcript or recording</li>
+      <li>Make the change in the prompt</li>
+      <li>Run self-tests on the specific scenario that failed</li>
+      <li>Confirm the fix works</li>
+      <li>Update the Asana ticket with a comment describing the change</li>
+    </ol>
+    <blockquote>Every change must be backed by data — a call, a metric, or specific QA feedback. Never change a prompt because you feel it should be different.</blockquote>
+  </div>
+</div>
+
+<!-- PAGE 33 — OWNERSHIP -->
+<div class="page d5" id="page-33">
+  <div class="page-head"><span class="page-num">Page 33</span><span class="day-badge">Day 5</span></div>
+  <div class="page-body">
+    <h1>You Own Your Agents — End to End</h1>
+    <p>When you build an agent, you are not just handing it off and moving on. <strong>You own that agent end to end</strong> — from the first draft through post-launch improvement and beyond.</p>
+    <div class="team-section">
+      <div class="team-card"><h3>Performance</h3><p>If the PTP rate drops, you investigate. If a metric is off-target, you find out why.</p></div>
+      <div class="team-card"><h3>Fixes</h3><p>If a scenario is missing, you add it. If the agent is misbehaving in live calls, you fix it.</p></div>
+      <div class="team-card"><h3>Updates</h3><p>Lender rules change. Approved consequences change. Your prompt must reflect that.</p></div>
+      <div class="team-card"><h3>Monitoring</h3><p>You listen to live calls regularly — not just once. This is an ongoing responsibility.</p></div>
+    </div>
+    <h2>By the End of Day 5, You Should Be Able To:</h2>
+    <ul>
+      <li>Understand the complete lifecycle of a ClearGrid AI voice agent</li>
+      <li>Write or fully revamp a prompt using the structured template</li>
+      <li>Set up and configure an agent correctly in ClearVoice</li>
+      <li>Run structured self-tests and identify issues</li>
+      <li>Navigate the QA and project owner sign-off process</li>
+      <li>Monitor live calls and apply improvements confidently</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  DAY 6 DIVIDER
+═════════════════════════════════════════ -->
+<div class="day-divider d6-div" id="day6">
+  <div class="day-divider-num">6</div>
+  <div class="day-divider-content">
+    <h2>Practical Knowledge Check</h2>
+    <p>50 MCQ quiz &nbsp;·&nbsp; Pass at 75% or above</p>
+  </div>
+  <div class="dv-logo-wrap"><img src="../assets/cleargrid-logo.png" alt="ClearGrid"></div>
+</div>
+
+<!-- PAGE 34 — KNOWLEDGE CHECK -->
+<div class="page d6" id="page-34">
+  <div class="page-head"><span class="page-num">Page 34</span><span class="day-badge">Day 6</span></div>
+  <div class="page-body">
+    <h1>Practical Knowledge Check</h1>
+    <div class="table-wrap"><table>
+      <tr><td><strong>Format</strong></td><td>50 Multiple Choice Questions (MCQ)</td></tr>
+      <tr><td><strong>Passing Score</strong></td><td>75% or above (37 / 50 minimum)</td></tr>
+      <tr><td><strong>Duration</strong></td><td>To be confirmed</td></tr>
+    </table></div>
+    <h2>Topics Covered</h2>
+    <ul>
+      <li>Your role and responsibilities at ClearGrid</li>
+      <li>Team structure and escalation paths</li>
+      <li>ClearVoice — platform, settings, and common mistakes</li>
+      <li>Key definitions: RPC, NRPC, PTP, BP, RTP, DNC, A2A, A2H, BNPL</li>
+      <li>Prompt types and when each is used</li>
+      <li>Metrics and performance targets</li>
+      <li>Prompt architecture and the 8-section template</li>
+      <li>Self-testing, QA handoff, and go-live process</li>
+      <li>Post-launch monitoring, issue triage, and improvements</li>
+    </ul>
+    <blockquote>The MCQ quiz will be provided separately. Passing means you are ready to start contributing independently.</blockquote>
+  </div>
+</div>
+
+<!-- CLOSING -->
+<div class="page closing-pg" id="closing">
+  <div class="page-head"><span class="page-num">Page 35</span><span class="day-badge closing-badge">Closing</span></div>
+  <div class="closing-content">
+    <h1>You Are Now Ready.</h1>
+    <div class="closing-line"></div>
+    <p>Welcome to the ClearGrid Prompt Team.</p>
+    <p style="margin-top:18px;font-size:14px;color:var(--muted)">Questions? Post in <code>#prompt-team</code> on Slack.</p>
+    <p style="font-size:12px;color:var(--border);margin-top:8px">Training material prepared by the ClearGrid Prompt Team.</p>
+  </div>
+</div>
+
+</div><!-- end .pages -->
+
+<a href="#top" class="back-top" title="Back to top">↑</a>
+
+</body>
+</html>
