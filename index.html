@@ -348,6 +348,26 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0}
 }
 .back-top:hover{background:var(--accent)}
 
+/* ── ORG TREE ─────────────────────────────────────── */
+.org-tree{margin:12px 0;text-align:center}
+.org-manager-box{
+  display:inline-block;
+  background:var(--navy);color:#fff;
+  padding:8px 18px;border-radius:8px;
+  font-weight:700;font-size:14px;
+}
+.org-down-arrow{font-size:22px;color:#94A3B8;line-height:1.8}
+.org-members-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.org-member{
+  background:var(--off-white);border:1px solid var(--border);
+  border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;
+  color:var(--navy);
+}
+
+/* ── OWNER COLUMN (stacked hierarchy) ───────────────── */
+.owner-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:180px}
+.owner-col-arrow{font-size:22px;color:#94A3B8;line-height:1}
+
 /* ── CLOSING ─────────────────────────────────────── */
 .closing-content{text-align:center;padding:40px 28px 48px}
 .closing-content h1{font-size:38px;color:var(--navy);margin-bottom:12px}
@@ -622,9 +642,19 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0}
     <h1>Project Ownership</h1>
     <p>Every lender project has an assigned project owner who approves the agent for go-live and is the final decision-maker on agent design.</p>
     <div class="owner-grid">
-      <div class="owner-card oc-d1"><div class="region">UAE Projects</div><div class="name">Sami Salti</div></div>
-      <div class="owner-card oc-d2"><div class="region">KSA Projects</div><div class="name">Faisal Alsugair</div></div>
-      <div class="owner-card oc-d3"><div class="region">Banking Projects</div><div class="name">Rhitesh &amp; Shyam</div></div>
+      <div class="owner-col">
+        <div class="owner-card oc-d1" style="width:100%"><div class="region">UAE Projects</div><div class="name">Sami Salti</div></div>
+        <div class="owner-col-arrow">↓</div>
+        <div class="owner-card oc-d1" style="width:100%;opacity:.85"><div class="region">UAE Projects</div><div class="name" style="font-size:17px">Mohammad Marghany</div></div>
+      </div>
+      <div class="owner-col">
+        <div class="owner-card oc-d2" style="width:100%"><div class="region">KSA Projects</div><div class="name">Faisal Alsugair</div></div>
+        <div class="owner-col-arrow">↓</div>
+        <div class="owner-card oc-d2" style="width:100%;opacity:.85"><div class="region">KSA Projects</div><div class="name" style="font-size:17px">Shaker</div></div>
+      </div>
+      <div class="owner-col">
+        <div class="owner-card oc-d3" style="width:100%"><div class="region">Banking Projects</div><div class="name">Sami Salti</div></div>
+      </div>
     </div>
     <h2>What the Project Owner Does</h2>
     <ul>
@@ -633,7 +663,7 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0}
       <li>Makes high-level decisions about the agent design and lender requirements</li>
       <li>Is the first point of contact for anything specific to their portfolio</li>
     </ul>
-    <p><strong>UAE agent → Sami &nbsp;|&nbsp; KSA agent → Faisal &nbsp;|&nbsp; Banking agent → Rhitesh or Shyam</strong></p>
+    <p><strong>UAE agent → Sami &nbsp;|&nbsp; KSA agent → Faisal &nbsp;|&nbsp; Banking agent → Sami Salti</strong></p>
   </div>
 </div>
 
@@ -651,9 +681,45 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0}
       </div>
       <div class="team-card">
         <h3>QA Team</h3>
-        <p style="font-weight:600;color:var(--navy)">Yasmin Mostafa (Manager) &nbsp;·&nbsp; Naglaa &nbsp;·&nbsp; Usman Azhar &nbsp;·&nbsp; Menna Mansour</p>
-        <p>Independent testing checkpoint before any agent goes live. Runs structured test calls, scores against a QA sheet, and provides written feedback.</p>
+        <div class="org-tree">
+          <div class="org-manager-box">Yasmin Mostafa <span style="font-size:12px;font-weight:400;opacity:.8">(Manager)</span></div>
+          <div class="org-down-arrow">↓</div>
+          <div class="org-members-row">
+            <span class="org-member">Naglaa</span>
+            <span class="org-member">Usman Azhan</span>
+            <span class="org-member">Menna Mansour</span>
+          </div>
+        </div>
+        <p style="margin-top:10px">Independent testing checkpoint before any agent goes live. Runs structured test calls, scores against a QA sheet, and provides written feedback.</p>
         <p>QA does not build the prompt — they are a separate quality layer. Reached via <code>#ai-qa</code>.</p>
+      </div>
+    </div>
+    <div class="team-section" style="margin-top:16px">
+      <div class="team-card">
+        <h3>Product Team</h3>
+        <p>Owns the product roadmap and translates business requirements into features and priorities, bridging the gap between stakeholders and engineering.</p>
+        <div class="org-tree">
+          <div class="org-manager-box">Rabab Abbas <span style="font-size:12px;font-weight:400;opacity:.8">(Manager)</span></div>
+          <div class="org-down-arrow">↓</div>
+          <div class="org-members-row">
+            <span class="org-member">Asad Sadiqi</span>
+            <span class="org-member">Omar Jaber</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-card">
+        <h3>Data Team</h3>
+        <p>Responsible for everything regarding data — pipelines, analytics, reporting, and the infrastructure that powers agent performance insights.</p>
+        <div class="org-tree">
+          <div class="org-manager-box">Muhammad Usman <span style="font-size:12px;font-weight:400;opacity:.8">(Data Analytics Manager)</span></div>
+          <div class="org-down-arrow">↓</div>
+          <div class="org-members-row">
+            <span class="org-member">Abdul Saboor</span>
+            <span class="org-member">Usamah</span>
+            <span class="org-member">Karol</span>
+          </div>
+        </div>
+        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Abdul Saboor, Usamah, and Karol serve as Data Engineers.</p>
       </div>
     </div>
     <div class="team-card" style="margin-top:16px">
@@ -1235,7 +1301,7 @@ Every branch terminates. No branch says "use judgment".</pre>
     <div class="owner-grid">
       <div class="owner-card oc-d1"><div class="region">UAE</div><div class="name">Sami Salti</div></div>
       <div class="owner-card oc-d2"><div class="region">KSA</div><div class="name">Faisal Alsugair</div></div>
-      <div class="owner-card oc-d3"><div class="region">Banking</div><div class="name">Rhitesh or Shyam</div></div>
+      <div class="owner-card oc-d3"><div class="region">Banking</div><div class="name">Sami Salti</div></div>
     </div>
     <p>The project owner tests the agent and gives the green light — or final feedback. Once confirmed, move to the journey build.</p>
     <h2>Journey Build with Noha</h2>
@@ -1298,7 +1364,7 @@ Every branch terminates. No branch says "use judgment".</pre>
       <div class="triage-row"><div class="triage-issue" style="border-left:3px solid #E74C3C">Threats, legal threats, police, sensitive calls</div><div class="triage-who" style="background:#FEE2E2;color:#991B1B;border-color:#FECACA">→ #threats</div></div>
       <div class="triage-row"><div class="triage-issue">UAE project decisions or approvals</div><div class="triage-who">→ Sami Salti</div></div>
       <div class="triage-row"><div class="triage-issue">KSA project decisions or approvals</div><div class="triage-who">→ Faisal Alsugair</div></div>
-      <div class="triage-row"><div class="triage-issue">Banking project decisions or approvals</div><div class="triage-who">→ Rhitesh or Shyam</div></div>
+      <div class="triage-row"><div class="triage-issue">Banking project decisions or approvals</div><div class="triage-who">→ Sami Salti</div></div>
     </div>
     <h2 style="margin-top:24px">Applying Improvements</h2>
     <ol>
